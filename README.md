@@ -21,37 +21,39 @@ This repository is a **demonstration harness**, not a production platform:
 
 ## Architecture
 
-The diagram below matches the design split: generic orchestration pipe (harness), portable skill package, and what the caller experiences at runtime.
+Runtime flow reads **left to right** inside the **Runtime boundary**. **Skills catalogues** and the **Domain Expert** sit in the **Domain boundary** (authoring and definitions); the two boundaries are stacked so they do not overlap in the diagram.
 
 ```mermaid
 flowchart TB
-  subgraph skillPkg [Skill package]
-    direction TB
-    SkillBody["SKILL.md body: instructions, branching, tone"]
-    SkillFm["Front matter: MCP server ids, HITL, context-strategy"]
-    SkillBody --- SkillFm
+  subgraph runtime [Runtime boundary]
+    direction LR
+    subgraph web [Web]
+      WebClient[Browser UI]
+    end
+    subgraph demoApi [Demo API]
+      DemoLayer[Express HTTP JSON static assets]
+    end
+    subgraph harnessApi [Harness API]
+      HarnessLayer[Skill run ReAct MCP pool LLM]
+    end
+    subgraph mcp [MCP]
+      McpServers[stdio tool servers]
+    end
+    WebClient -->|"static assets and UI"| DemoLayer
+    DemoLayer -->|"run resume and meta routes"| HarnessLayer
+    HarnessLayer -->|"discover and invoke tools"| McpServers
   end
 
-  subgraph harnessEngine [AI Harness: generic engine for every skill]
-    direction TB
-    Ingress["HTTP: runs, resume, catalogue, static UI"]
-    RunState["Run snapshots and LangGraph thread id"]
-    CtxMerge["Context merge or enrich from optional strategy"]
-    ReactLoop["ReAct loop: LLM chooses when to call tools"]
-    McpPool["MCP client pool: reuse stdio tool processes"]
-    Observability["Structured observability"]
-    Ingress --> RunState --> CtxMerge --> ReactLoop --> McpPool
-    ReactLoop --> Observability
+  subgraph domainBoundary [Domain boundary]
+    direction LR
+    subgraph skillsCatalogues [Skills catalogues]
+      Catalogue[SKILL.md trees and playbooks]
+    end
+    DomainExpert[Domain Expert]
+    DomainExpert -.->|"author and maintain packages"| Catalogue
   end
 
-  subgraph runView [What callers experience]
-    AgentView["Agent equals orchestration pipe plus one loaded skill"]
-  end
-
-  skillPkg -->|"selected by skillName"| CtxMerge
-  skillPkg -->|"declares tool backends"| McpPool
-  harnessEngine --> AgentView
-  skillPkg -.->|"shapes behavior, not pipe layout"| ReactLoop
+  HarnessLayer -->|"load and validate skill"| Catalogue
 ```
 
 ## Demo
