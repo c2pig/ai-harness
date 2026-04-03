@@ -12,6 +12,13 @@ This repo demonstrates that a **skill is a portable package**: a `SKILL.md` file
 
 3. **Agent = orchestration (execution) + skill (capability)** — At runtime, the harness loads a skill by name, wires the declared MCP servers, injects context, and hands control to the LLM loop. The skill shapes what the agent *does*; the orchestration shapes *how* it runs.
 
+## Out of scope
+
+This repository is a **demonstration harness**, not a production platform:
+
+- **Memory management** — Run and thread state are **in-memory** for the demo. There is no durable long-term memory, cross-session recall, or production-grade retention or eviction policy.
+- **Observability** — The code may emit **structured logs** for local debugging (and optional CloudWatch wiring), but **full observability**—distributed tracing, metrics, SLOs, centralized log pipelines, and alerting—is not a goal of this PoC.
+
 ## Architecture
 
 The diagram below matches the design split: generic orchestration pipe (harness), portable skill package, and what the caller experiences at runtime.
