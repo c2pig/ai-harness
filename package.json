@@ -1,0 +1,30 @@
+{
+  "name": "agent-harness-monorepo",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "description": "Agent harness monorepo — generic skills, MCP, and orchestration demo",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "build": "tsc -b tsconfig.build.json",
+    "postbuild": "node scripts/copy-adapters-mock-fixtures.mjs",
+    "clean": "rm -rf dist packages/*/dist apps/*/dist; find packages apps \\( -name '.tsbuildinfo' -o -name 'tsconfig.tsbuildinfo' -o -name '*.tsbuildinfo' \\) -delete 2>/dev/null || true; find packages apps -type f \\( -path '*/src/*.js' -o -path '*/src/*.d.ts' -o -path '*/src/*.d.ts.map' \\) -delete 2>/dev/null || true",
+    "dev": "npm run build && node dist/apps/demo-api/server.js",
+    "dev:tsx": "tsx apps/demo-api/src/server.ts",
+    "start": "node dist/apps/demo-api/server.js",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

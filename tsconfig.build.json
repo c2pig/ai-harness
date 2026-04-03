@@ -1,0 +1,15 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./packages/contracts" },
+    { "path": "./packages/observability" },
+    { "path": "./packages/skill-loader" },
+    { "path": "./packages/adapters-mock" },
+    { "path": "./packages/adapters-llm" },
+    { "path": "./packages/orchestration-engine" },
+    { "path": "./packages/ai-harness" },
+    { "path": "./apps/mcp-mock-workflow" },
+    { "path": "./apps/mcp-tools-generic" },
+    { "path": "./apps/demo-api" }
+  ]
+}

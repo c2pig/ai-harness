@@ -1,0 +1,25 @@
+{
+  "name": "@agent-harness/orchestration-engine",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@agent-harness/contracts": "0.2.0",
+    "@langchain/core": "^0.3.29",
+    "@langchain/langgraph": "^0.2.39"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2"
+  }
+}

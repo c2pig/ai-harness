@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "lib": ["ES2022"],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "baseUrl": ".",
+    "paths": {
+      "@agent-harness/contracts": ["./packages/contracts/dist/index.d.ts"],
+      "@agent-harness/observability": ["./packages/observability/dist/index.d.ts"],
+      "@agent-harness/skill-loader": ["./packages/skill-loader/dist/index.d.ts"],
+      "@agent-harness/adapters-mock": ["./packages/adapters-mock/dist/index.d.ts"],
+      "@agent-harness/adapters-llm": ["./packages/adapters-llm/dist/index.d.ts"],
+      "@agent-harness/orchestration-engine": ["./packages/orchestration-engine/dist/index.d.ts"],
+      "@agent-harness/ai-harness": ["./packages/ai-harness/dist/index.d.ts"]
+    }
+  }
+}

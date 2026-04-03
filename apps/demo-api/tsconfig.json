@@ -1,0 +1,21 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "../../dist/apps/demo-api",
+    "rootDir": "src",
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "tsBuildInfoFile": "./.tsbuildinfo"
+  },
+  "references": [
+    { "path": "../../packages/contracts" },
+    { "path": "../../packages/observability" },
+    { "path": "../../packages/skill-loader" },
+    { "path": "../../packages/orchestration-engine" },
+    { "path": "../../packages/adapters-mock" },
+    { "path": "../../packages/adapters-llm" },
+    { "path": "../../packages/ai-harness" }
+  ],
+  "include": ["src/**/*.ts"]
+}

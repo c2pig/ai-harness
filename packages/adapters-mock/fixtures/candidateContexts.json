@@ -1,0 +1,17 @@
+{
+  "5001": {
+    "defaultJobId": 101,
+    "defaultMatchId": 9001,
+    "recommendedScenarioId": "S1_HIRER_LIKED_AT_LEAST_ONE"
+  },
+  "5002": {
+    "defaultJobId": 202,
+    "defaultMatchId": 9002,
+    "recommendedScenarioId": "S4_NO_SUITABLE_CVS_10_DAYS"
+  },
+  "5003": {
+    "defaultJobId": 303,
+    "defaultMatchId": 9003,
+    "recommendedScenarioId": "S5_INTERVIEW_WENT_WELL"
+  }
+}

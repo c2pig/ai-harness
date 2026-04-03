@@ -1,0 +1,52 @@
+{
+  "9001": {
+    "cvHighlights": [
+      "Built event-driven payment platform at scale",
+      "Reduced API latency by 35 percent",
+      "Led 4 engineers on backend platform team"
+    ],
+    "bestCandidates": [
+      "Candidate A: strong backend depth and domain fit",
+      "Candidate B: strong architecture and mentoring record"
+    ],
+    "nextBestCandidates": [
+      "Candidate C: excellent systems design and communication",
+      "Candidate D: high delivery consistency in similar domain"
+    ],
+    "interviewFeedback": "Good technical strength, minor concerns about stakeholder communication.",
+    "rejectionReasons": [
+      "Lacking domain-specific stakeholder leadership",
+      "Compensation mismatch in final stage"
+    ],
+    "rootCause": "requirements too specific"
+  },
+  "9002": {
+    "cvHighlights": [
+      "Strong BI reporting background",
+      "Experience in marketplace analytics"
+    ],
+    "bestCandidates": [
+      "Candidate E: strongest SQL and analytics storytelling"
+    ],
+    "interviewFeedback": "Interview did not demonstrate enough ownership examples.",
+    "rejectionReasons": [
+      "Insufficient interview performance"
+    ],
+    "rootCause": "salary issue"
+  },
+  "9003": {
+    "cvHighlights": [
+      "Led multi-team product roadmap delivery",
+      "Strong stakeholder alignment in matrix org"
+    ],
+    "bestCandidates": [
+      "Candidate H: strong domain fit and leadership"
+    ],
+    "nextBestCandidates": [
+      "Candidate I: strong strategic thinking and communication"
+    ],
+    "interviewFeedback": "Strong product judgement and communication in interview.",
+    "rejectionReasons": [],
+    "rootCause": "requirements too specific"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "100": {
+    "name": "Demo party Alpha",
+    "contacts": [
+      { "contactId": 5001, "label": "S1 — primary contact" },
+      { "contactId": 5002, "label": "S4 — alternate thread" },
+      { "contactId": 5003, "label": "S5 — follow-up contact" }
+    ]
+  },
+  "200": {
+    "name": "Demo party Beta",
+    "contacts": [{ "contactId": 5001, "label": "Shared contact 5001" }]
+  }
+}

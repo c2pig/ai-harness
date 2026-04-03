@@ -1,0 +1,25 @@
+{
+  "S1_HIRER_LIKED_AT_LEAST_ONE": {
+    "additionalCandidatesToCrossSell": [
+      "Candidate C with similar stack but lower salary expectation",
+      "Candidate D with stronger people leadership"
+    ]
+  },
+  "S4_NO_SUITABLE_CVS_10_DAYS": {
+    "marketDataBenchmarks": [
+      "Median salary for this role is 12 percent higher than current range",
+      "Similar employers reduced must-have criteria from 6 to 4 for faster hiring"
+    ]
+  },
+  "S7_INTERVIEW_DID_NOT_GO_WELL_WITH_OTHERS": {
+    "additionalCandidatesToCrossSell": [
+      "Candidate F available immediately",
+      "Candidate G has direct industry experience"
+    ]
+  },
+  "S5_INTERVIEW_WENT_WELL": {
+    "additionalCandidatesToCrossSell": [
+      "Candidate H can be considered for second role pipeline"
+    ]
+  }
+}

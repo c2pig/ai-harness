@@ -1,0 +1,30 @@
+{
+  "101": {
+    "title": "Senior Backend Engineer",
+    "mustHaveRequirements": [
+      "Node.js production experience",
+      "Distributed systems fundamentals",
+      "Strong API design"
+    ],
+    "salaryRange": "AUD 150k-180k",
+    "location": "Sydney"
+  },
+  "202": {
+    "title": "Data Analyst",
+    "mustHaveRequirements": [
+      "SQL and dashboarding",
+      "Stakeholder communication"
+    ],
+    "salaryRange": "SGD 90k-120k",
+    "location": "Singapore"
+  },
+  "303": {
+    "title": "Product Manager",
+    "mustHaveRequirements": [
+      "Product discovery and prioritization",
+      "Cross-functional leadership"
+    ],
+    "salaryRange": "AUD 140k-170k",
+    "location": "Melbourne"
+  }
+}

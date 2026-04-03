@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Agent harness demo</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="container">
+      <header class="page-header">
+        <h1>Generic agent harness demo</h1>
+        <p class="muted small">
+          Skills from <code>/meta/catalogue</code>; runs use ReAct + MCP tools + mandatory
+          <code>LLM_API_KEY</code>. Edit <code>skill-catalogues/</code> and restart
+          the API.
+        </p>
+      </header>
+
+      <div class="layout-top">
+        <div class="col-left">
+          <section class="card card-stack">
+            <h2 class="section-title-run">Run</h2>
+            <form id="run-form">
+              <label class="full-width"
+                >Skill
+                <select id="skillName" required></select>
+                <div id="skill-meta-inline" class="skill-meta-inline" aria-live="polite"></div>
+              </label>
+              <label class="full-width"
+                >Input
+                <textarea
+                  id="userInput"
+                  rows="4"
+                  required
+                  placeholder="Free-text task for the agent…"
+                ></textarea>
+              </label>
+              <div class="run-actions">
+                <button type="submit" id="btn-run">Send</button>
+                <button type="button" id="btn-new-chat" class="btn-secondary">
+                  New chat
+                </button>
+                <div id="run-status-inline" class="run-status-inline" hidden>
+                  <span id="status-badge" class="badge">—</span>
+                  <span id="spinner" class="spinner" hidden></span>
+                </div>
+              </div>
+            </form>
+          </section>
+
+          <section class="card card-stack card-stack-last">
+            <h2 class="section-h2-muted">Latest reply</h2>
+            <pre id="agent-out" class="trace trace-scroll">—</pre>
+          </section>
+        </div>
+
+        <div class="col-gutter" aria-hidden="true"></div>
+
+        <div class="col-right">
+          <section class="card card-stack card-stack-last conv-card">
+            <div class="conv-header">
+              <h2 class="conv-title">Conversation</h2>
+              <span
+                id="thread-chip"
+                class="thread-chip thread-chip-new"
+                title=""
+              >New chat</span>
+            </div>
+            <p id="hitl-chat-blocked" class="hitl-banner" hidden>
+              HITL pending: approve, reject, or edit below before sending another message.
+            </p>
+            <div id="chat-transcript" class="chat-transcript" aria-live="polite"></div>
+            <div id="hitl-actions" class="hitl-actions-panel" hidden>
+              <p class="muted small hitl-intro">
+                The agent paused for human review. Approve, reject, or resume with edits.
+              </p>
+              <label class="full-width hitl-label"
+                >Notes / edited reply
+                <textarea
+                  id="correctionText"
+                  rows="3"
+                  placeholder="Optional — used for edit decision or extra instructions on resume"
+                ></textarea>
+              </label>
+              <div class="hitl-buttons">
+                <button type="button" id="btn-approve" class="btn-secondary">
+                  Approve
+                </button>
+                <button type="button" id="btn-reject" class="btn-secondary">
+                  Reject
+                </button>
+                <button type="button" id="btn-edit" class="btn-secondary">
+                  Resume with edit
+                </button>
+              </div>
+              <div class="email-preview-wrap">
+                <h3 class="email-preview-title">Mock email preview</h3>
+                <p class="muted small email-preview-hint">
+                  Shown after approve / edit completes.
+                </p>
+                <pre id="email-preview-out" class="trace trace-compact">—</pre>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <div class="layout-bottom">
+        <details class="card bottom-panel debug-details" id="trace-details">
+          <summary class="bottom-summary">Trace</summary>
+          <pre id="trace-out" class="trace trace-bottom">—</pre>
+        </details>
+        <details class="card bottom-panel debug-details" id="tool-details">
+          <summary class="bottom-summary">Tool calls</summary>
+          <div id="tool-trace-out" class="tool-trace tool-trace-bottom">—</div>
+        </details>
+        <details class="card bottom-panel debug-details" id="output-details">
+          <summary class="bottom-summary">Last API response</summary>
+          <pre id="output" class="trace trace-bottom trace-api">Submit to run…</pre>
+        </details>
+        <section class="card bottom-panel bottom-panel-error" id="error-card" hidden>
+          <h2>Error</h2>
+          <pre id="error-out" class="error-panel error-bottom"></pre>
+        </section>
+      </div>
+    </main>
+    <script src="/app.js" type="module"></script>
+  </body>
+</html>

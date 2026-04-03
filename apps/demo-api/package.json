@@ -1,0 +1,27 @@
+{
+  "name": "@agent-harness/demo-api",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "node ../../dist/apps/demo-api/server.js"
+  },
+  "dependencies": {
+    "@agent-harness/contracts": "0.2.0",
+    "@agent-harness/observability": "0.2.0",
+    "@agent-harness/skill-loader": "0.2.0",
+    "@agent-harness/orchestration-engine": "0.2.0",
+    "@agent-harness/adapters-mock": "0.2.0",
+    "@agent-harness/adapters-llm": "0.2.0",
+    "@agent-harness/ai-harness": "0.2.0",
+    "@langchain/langgraph-checkpoint": "~0.0.17",
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/supertest": "^6.0.3",
+    "supertest": "^7.1.1",
+    "typescript": "^5.7.2"
+  }
+}
