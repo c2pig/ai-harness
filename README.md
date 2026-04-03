@@ -48,7 +48,10 @@ flowchart TB
 ```
 
 ## Demo
-![Demo Video](./assets/ai-harness-demo.mov)
+
+![AI Harness demo UI](assets/ai-harness-demo.gif)
+
+Full-quality screen recording (with audio, if any): [`assets/ai-harness-demo.mov`](assets/ai-harness-demo.mov). The loop above is the same demo as [`assets/ai-harness-demo.gif`](assets/ai-harness-demo.gif) for inline viewing on GitHub.
 
 ## Skill decision matrix
 
@@ -85,7 +88,7 @@ npm run dev
 
 Open [http://localhost:4010](http://localhost:4010).
 
-A screen recording of the demo UI is in [`assets/ai-harness-demo.mov`](assets/ai-harness-demo.mov).
+Screen recording of the demo UI: [`assets/ai-harness-demo.mov`](assets/ai-harness-demo.mov) (GIF preview in [Demo](#demo)).
 
 ## Tests
 
