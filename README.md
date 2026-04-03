@@ -82,6 +82,8 @@ npm run dev
 
 Open [http://localhost:4010](http://localhost:4010).
 
+A screen recording of the demo UI is in [`assets/ai-harness-demo.mov`](assets/ai-harness-demo.mov).
+
 ## Tests
 
 ```bash
