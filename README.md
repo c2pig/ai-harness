@@ -47,6 +47,9 @@ flowchart TB
   skillPkg -.->|"shapes behavior, not pipe layout"| ReactLoop
 ```
 
+## Demo
+![Demo Video](./assets/ai-harness-demo.mov)
+
 ## Skill decision matrix
 
 | Use case             | Skill                         | MCP server        | Tools used                     | HITL | Complexity                                                                     | Effort to replicate                                                            | Notes                                                       |
