@@ -9,6 +9,7 @@ import {
   SCENARIO_CONTRACTS,
 } from "@agent-harness/adapters-mock";
 import type { ScenarioId } from "@agent-harness/adapters-mock";
+import { resolveUserId } from "@agent-harness/memory";
 
 export type RunContextStrategy = {
   mergeFromInput(
@@ -17,6 +18,10 @@ export type RunContextStrategy = {
   ): Record<string, unknown> | undefined;
   enrichContext(ctx: Record<string, unknown> | undefined): Record<string, unknown>;
 };
+
+function memoryEnabledFromEnv(): boolean {
+  return process.env.MEMORY_ENABLED === "true";
+}
 
 function resolveScenarioId(hint: unknown, recommended?: ScenarioId): ScenarioId {
   if (typeof hint === "string" && hint in SCENARIO_CONTRACTS) {
@@ -132,6 +137,13 @@ const fixtureEnrichmentStrategy: RunContextStrategy = {
       confidence: 0,
     };
 
+    const resolvedMem0 = memoryEnabledFromEnv() ? resolveUserId(num) : undefined;
+    const mem0UserId = resolvedMem0;
+    const memoryVertical =
+      typeof base.memoryVertical === "string" && base.memoryVertical.trim()
+        ? base.memoryVertical.trim()
+        : "hiring";
+
     return {
       ...base,
       candidateId: num,
@@ -139,6 +151,9 @@ const fixtureEnrichmentStrategy: RunContextStrategy = {
       jobId,
       matchId,
       orchestrationSeed,
+      ...(mem0UserId
+        ? { mem0UserId, memoryVertical }
+        : {}),
     };
   },
 };

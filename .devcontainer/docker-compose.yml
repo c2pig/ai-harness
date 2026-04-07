@@ -1,0 +1,50 @@
+services:
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    healthcheck:
+      test: ["CMD-SHELL", "ollama list >/dev/null 2>&1 || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 24
+      start_period: 20s
+
+  neo4j:
+    image: neo4j:5-community
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    environment:
+      NEO4J_AUTH: neo4j/harness-memory-local
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "cypher-shell -u neo4j -p harness-memory-local 'RETURN 1' || exit 1",
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 12
+      start_period: 45s
+
+  app:
+    image: mcr.microsoft.com/devcontainers/typescript-node:22-bookworm
+    volumes:
+      - ..:/workspace:cached
+    command: sleep infinity
+    depends_on:
+      ollama:
+        condition: service_healthy
+      neo4j:
+        condition: service_healthy
+    environment:
+      OLLAMA_URL: http://ollama:11434
+      NEO4J_URL: bolt://neo4j:7687
+      NEO4J_USERNAME: neo4j
+      NEO4J_PASSWORD: harness-memory-local
+
+volumes:
+  ollama_data:

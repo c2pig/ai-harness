@@ -15,6 +15,7 @@
     "build": "tsc -p tsconfig.json"
   },
   "dependencies": {
+    "@agent-harness/contracts": "0.2.0",
     "@agent-harness/adapters-llm": "0.2.0",
     "@agent-harness/skill-loader": "0.2.0",
     "@langchain/core": "^0.3.26",

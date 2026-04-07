@@ -9,3 +9,4 @@ export type {
   SkillRuntimeDeps,
   ToolTraceEntry,
 } from "./types.js";
+export type { LongTermMemoryClient } from "@agent-harness/contracts";

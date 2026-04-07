@@ -16,7 +16,8 @@ This repo demonstrates that a **skill is a portable package**: a `SKILL.md` file
 
 This repository is a **demonstration harness**, not a production platform:
 
-- **Memory management** — Run and thread state are **in-memory** for the demo. There is no durable long-term memory, cross-session recall, or production-grade retention or eviction policy.
+- **Default memory** — Run and thread state are **in-memory** for the demo (LangGraph checkpointer). There is no production-grade retention or eviction policy for that path.
+- **Optional long-term memory** — The separate package `@agent-harness/memory` (Mem0 OSS + local Ollama + optional Neo4j) adds **semantic** recall when you opt in (`MEMORY_ENABLED=true` and local infra). That path is still a PoC, not a production memory platform. See [packages/memory/README.md](packages/memory/README.md).
 - **Observability** — The code may emit **structured logs** for local debugging (and optional CloudWatch wiring), but **full observability**—distributed tracing, metrics, SLOs, centralized log pipelines, and alerting—is not a goal of this PoC.
 
 ## Architecture
@@ -36,11 +37,20 @@ flowchart TB
     subgraph harnessApi [Harness API]
       HarnessLayer[Skill run ReAct MCP pool LLM]
     end
+    subgraph memOpt [Optional memory]
+      MemPkg["@agent-harness/memory Mem0"]
+      Ollama[Ollama local]
+      Neo4j[Neo4j Docker optional graph]
+    end
     subgraph mcp [MCP]
       McpServers[stdio tool servers]
     end
     WebClient -->|"static assets and UI"| DemoLayer
     DemoLayer -->|"run resume and meta routes"| HarnessLayer
+    DemoLayer -.->|"MEMORY_ENABLED"| MemPkg
+    MemPkg -.-> Ollama
+    MemPkg -.-> Neo4j
+    HarnessLayer -.->|"longTermMemory search add"| MemPkg
     HarnessLayer -->|"discover and invoke tools"| McpServers
   end
 
@@ -76,6 +86,7 @@ Full-quality screen recording (with audio, if any): [`assets/ai-harness-demo.mov
 ## Prerequisites
 
 - **Node.js** >= 18
+- **Optional Dev Container** — [`.devcontainer/`](.devcontainer/) provides Node, Ollama, and Neo4j for Mem0. See [packages/memory/README.md](packages/memory/README.md).
 
 | Variable | Purpose |
 | -------- | ------- |
@@ -83,6 +94,11 @@ Full-quality screen recording (with audio, if any): [`assets/ai-harness-demo.mov
 | `LLM_API_KEY` | API key (required for demo-api startup) |
 | `LLM_MODEL` | Model id (default `gpt-4o-mini`) |
 | `PORT` | HTTP port (default `4010`) |
+| `MEMORY_ENABLED` | Optional: set `true` to enable Mem0 long-term memory (requires Ollama; Neo4j optional for graph). |
+| `OLLAMA_URL` | Optional: Ollama base URL for Mem0 (default `http://127.0.0.1:11434`). |
+| `NEO4J_URL` | Optional: e.g. `bolt://localhost:7687` — when set, graph memory is enabled unless `MEM0_GRAPH_ENABLED=false`. |
+| `NEO4J_USERNAME` / `NEO4J_PASSWORD` | Optional: Neo4j credentials (compose example uses password `harness-memory-local`). |
+| `MEM0_GRAPH_ENABLED` | Optional: `true` / `false` to force graph on or off. |
 | `HARNESS_CW_LOG_GROUP` | Optional: with `AWS_REGION`, also emit JSON lines to CloudWatch |
 | `HARNESS_CW_STREAM_PREFIX` | Optional: CloudWatch stream prefix (default `harness-demo-local`) |
 | `AWS_REGION` | Optional: required with `HARNESS_CW_LOG_GROUP` for CloudWatch |
@@ -96,6 +112,19 @@ npm run dev
 ```
 
 Open [http://localhost:4010](http://localhost:4010).
+
+### Memory (optional)
+
+To run the demo with **Mem0** enrichment (local Ollama + optional Neo4j):
+
+```bash
+npm run memory:up
+# Pull models once: ollama pull nomic-embed-text:latest && ollama pull llama3.1:8b
+export NEO4J_URL=bolt://localhost:7687 NEO4J_PASSWORD=harness-memory-local
+npm run dev:memory
+```
+
+Full diagrams, env reference, and troubleshooting: [packages/memory/README.md](packages/memory/README.md).
 
 Screen recording of the demo UI: [`assets/ai-harness-demo.mov`](assets/ai-harness-demo.mov) (GIF preview in [Demo](#demo)).
 

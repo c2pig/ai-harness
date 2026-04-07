@@ -11,12 +11,45 @@ import type {
   ToolTraceEntry,
 } from "./types.js";
 
-function buildSystemPrompt(skill: LoadedSkill, context: Record<string, unknown>): string {
+const LONG_TERM_MEMORY_MAX_LINES = 12;
+
+function buildSystemPrompt(
+  skill: LoadedSkill,
+  context: Record<string, unknown>,
+  longTermMemoryBlock: string,
+): string {
+  const memBlock =
+    longTermMemoryBlock.trim().length > 0
+      ? `\n\n## Long-term memory\n${longTermMemoryBlock.trim()}\n`
+      : "";
   const ctxBlock =
     context && Object.keys(context).length > 0
       ? `\n\n## Context (JSON)\n\`\`\`json\n${JSON.stringify(context, null, 2)}\n\`\`\`\n`
       : "";
-  return `${skill.body.trim()}${ctxBlock}`;
+  return `${skill.body.trim()}${memBlock}${ctxBlock}`;
+}
+
+async function buildLongTermMemoryBlock(
+  deps: SkillRuntimeDeps,
+  context: Record<string, unknown>,
+  searchQuery: string,
+): Promise<string> {
+  if (!deps.longTermMemory) return "";
+  const uid = context.mem0UserId;
+  if (typeof uid !== "string" || !uid.trim()) return "";
+  try {
+    const { results } = await deps.longTermMemory.search(searchQuery.trim() || ".", {
+      userId: uid.trim(),
+      limit: 8,
+    });
+    if (!results.length) return "";
+    return results
+      .map((r, i) => `${i + 1}. ${r.memory}`)
+      .slice(0, LONG_TERM_MEMORY_MAX_LINES)
+      .join("\n");
+  } catch {
+    return "";
+  }
 }
 
 function messagesPreview(messages: BaseMessage[]): unknown[] {
@@ -71,6 +104,14 @@ export async function runSkillInvocation(
     toolTrace.push(e);
   };
 
+  const memorySearchQuery =
+    phase === "initial" ? userMessage : resumeHumanText(resume!);
+  const longTermMemoryBlock = await buildLongTermMemoryBlock(
+    deps,
+    context,
+    memorySearchQuery,
+  );
+
   const allTools: DynamicStructuredTool[] = [];
 
   for (const serverId of skill.mcpServerIds) {
@@ -82,7 +123,7 @@ export async function runSkillInvocation(
   const agent = createReactAgent({
     llm,
     tools: allTools,
-    prompt: buildSystemPrompt(skill, context),
+    prompt: buildSystemPrompt(skill, context, longTermMemoryBlock),
     checkpointer,
   });
 
@@ -112,6 +153,13 @@ export async function runSkillInvocation(
     };
   }
 
+  await maybePersistLongTermMemory(
+    deps,
+    context,
+    memorySearchQuery,
+    resultText,
+  );
+
   return {
     status: "completed",
     resultText,
@@ -119,4 +167,43 @@ export async function runSkillInvocation(
     messagesPreview: messagesPreview(outMessages),
     toolTrace,
   };
+}
+
+async function maybePersistLongTermMemory(
+  deps: SkillRuntimeDeps,
+  context: Record<string, unknown>,
+  userTurnForMemory: string,
+  resultText: string | undefined,
+): Promise<void> {
+  if (!deps.longTermMemory || !resultText?.trim()) return;
+  const uid = context.mem0UserId;
+  if (typeof uid !== "string" || !uid.trim()) return;
+  const vertical =
+    typeof context.memoryVertical === "string" && context.memoryVertical.trim()
+      ? context.memoryVertical.trim()
+      : "hiring";
+  const scenarioId =
+    typeof context.scenarioId === "string" && context.scenarioId.trim()
+      ? context.scenarioId.trim()
+      : undefined;
+  const userTurn =
+    userTurnForMemory.trim() ||
+    "(empty user turn — e.g. HITL resume with decision only)";
+  try {
+    await deps.longTermMemory.add(
+      [
+        { role: "user", content: userTurn },
+        { role: "assistant", content: resultText.trim() },
+      ],
+      {
+        userId: uid.trim(),
+        metadata: {
+          vertical,
+          ...(scenarioId ? { scenarioId } : {}),
+        },
+      },
+    );
+  } catch {
+    /* best-effort persistence */
+  }
 }

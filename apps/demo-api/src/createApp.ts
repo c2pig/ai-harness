@@ -10,6 +10,7 @@ import {
   McpClientPool,
   type SkillRuntimeDeps,
 } from "@agent-harness/ai-harness";
+import type { LongTermMemoryClient } from "@agent-harness/contracts";
 import { getGatewayEnv } from "@agent-harness/adapters-llm";
 import {
   demoWebStaticPath,
@@ -62,7 +63,31 @@ export async function createApp(): Promise<CreateAppResult> {
   };
 
   const mcpPool = new McpClientPool(mcpLaunchers);
-  const skillRuntime: SkillRuntimeDeps = { llm, checkpointer, mcpPool };
+
+  let longTermMemory: LongTermMemoryClient | undefined;
+  if (process.env.MEMORY_ENABLED === "true") {
+    try {
+      const memoryMod = await import("@agent-harness/memory");
+      longTermMemory = await memoryMod.createLongTermMemoryClient();
+      await memoryMod.seedDemoData(longTermMemory);
+      consoleLogger.info(
+        {},
+        "Long-term memory (Mem0) enabled: client ready and demo data seeded.",
+      );
+    } catch (err) {
+      consoleLogger.error(
+        { err: err instanceof Error ? err.message : String(err) },
+        "Long-term memory init failed; continuing without Mem0.",
+      );
+    }
+  }
+
+  const skillRuntime: SkillRuntimeDeps = {
+    llm,
+    checkpointer,
+    mcpPool,
+    ...(longTermMemory ? { longTermMemory } : {}),
+  };
 
   const app = express();
   app.use(express.json());

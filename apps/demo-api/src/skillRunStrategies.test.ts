@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import type { LoadedSkill } from "@agent-harness/skill-loader";
 import {
   enrichRunContext,
@@ -105,5 +105,22 @@ describe("enrichRunContext", () => {
     ).toEqual({
       foo: "bar",
     });
+  });
+
+  it("adds mem0UserId when MEMORY_ENABLED is true and candidate maps to a fixture", () => {
+    vi.stubEnv("MEMORY_ENABLED", "true");
+    const out = enrichRunContext(
+      minimalSkill({
+        id: "evidence-gated-reply",
+        contextStrategy: "fixture-enrichment",
+      }),
+      { candidateId: 5001 },
+    );
+    expect(out.mem0UserId).toBe("user-5001");
+    expect(out.memoryVertical).toBe("hiring");
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
   });
 });

@@ -13,7 +13,10 @@
     "postbuild": "node scripts/copy-adapters-mock-fixtures.mjs",
     "clean": "rm -rf dist packages/*/dist apps/*/dist; find packages apps \\( -name '.tsbuildinfo' -o -name 'tsconfig.tsbuildinfo' -o -name '*.tsbuildinfo' \\) -delete 2>/dev/null || true; find packages apps -type f \\( -path '*/src/*.js' -o -path '*/src/*.d.ts' -o -path '*/src/*.d.ts.map' \\) -delete 2>/dev/null || true",
     "dev": "npm run build && node dist/apps/demo-api/server.js",
+    "dev:memory": "MEMORY_ENABLED=true npm run dev",
     "dev:tsx": "tsx apps/demo-api/src/server.ts",
+    "memory:up": "docker compose -f .devcontainer/docker-compose.yml up -d ollama neo4j",
+    "memory:down": "docker compose -f .devcontainer/docker-compose.yml down",
     "start": "node dist/apps/demo-api/server.js",
     "test": "vitest run",
     "test:watch": "vitest"
