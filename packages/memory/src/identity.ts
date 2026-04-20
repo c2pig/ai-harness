@@ -1,3 +1,9 @@
+/**
+ * Shared Mem0 namespace for the architecture-department “accumulate knowledge” PoC.
+ * All seeded and live turns for `context-strategy: dept-memory` use this `entityId`.
+ */
+export const SHARED_DEPT_ARCHITECTURE_ENTITY_ID = "dept-architecture";
+
 /** Maps fixture contact IDs (candidateContexts.json) to stable entity id prefixes. */
 
 const CONTACT_TO_ENTITY_PREFIX: Record<number, string> = {

@@ -1,11 +1,11 @@
 # @agent-harness/memory
 
-Optional **Mem0 OSS** integration for the agent harness: long-term, semantically searchable memory keyed by a stable **`entityId`** (passed through to Mem0 as its `userId` filter), with demo seed data for **legacy** vs **journey** domains aligned to fixture contacts `5001`–`5003`.
+Optional **Mem0 OSS** integration for the agent harness: long-term, semantically searchable memory keyed by a stable **`entityId`** (passed through to Mem0 as its `userId` filter). Demo seeds include a **shared department** namespace **`dept-architecture`** (`SHARED_DEPT_ARCHITECTURE_ENTITY_ID`) for the **`accumulate-knowledge-arch`** skill, plus **`buildFixtureEntityId`** for hiring skills (`user-{id}-legacy` / `user-{id}-journey`).
 
 ## Objective
 
 - Give skills **extra narrative context** beyond the current run (LangGraph `MemorySaver` still handles **thread** state only).
-- Demonstrate **one person, partitioned by skill domain**: **`user-5001-legacy`** vs **`user-5001-journey`** (see `memory-entity-domain` on each skill) so hiring demos and journey flows do not share the same Mem0 graph/vector namespace unless you use the same `entityId`.
+- Demonstrate **fixture-based hiring** namespaces (`user-*-legacy` / `user-*-journey`) when using **`fixture-enrichment`**, and a **single shared** Mem0 namespace **`dept-architecture`** for the architecture-department accumulate-knowledge PoC (`context-strategy: dept-memory`).
 - Stay **optional**: when `MEMORY_ENABLED` is unset, demo-api and `ai-harness` behave as before.
 
 ## Scope (PoC)
@@ -46,25 +46,30 @@ flowchart TB
 
 ## Data architecture: identity and metadata
 
-Fixture **`candidateId`** values (from `adapters-mock` / `candidateContexts.json`) map to harness **`entityId`** strings via **`buildFixtureEntityId(contactId, domain)`** — e.g. `user-5001-legacy` or `user-5001-journey`. The memory client passes that string to Mem0 as **`userId`** (Mem0’s filter name). Memories carry **metadata** (e.g. `vertical`, `scenarioId`, `contactId`) for filtering and debugging.
+- **Hiring / evidence skills:** `candidateId` from `adapters-mock` / `candidateContexts.json` maps to **`entityId`** via **`buildFixtureEntityId(contactId, domain)`** — e.g. `user-5001-legacy` or `user-5001-journey`.
+- **Architecture PoC:** `context-strategy: dept-memory` uses the constant **`dept-architecture`** for all seeds and live adds under that skill.
+
+The memory client passes **`entityId`** to Mem0 as **`userId`** (Mem0’s filter name). Memories carry **metadata** (e.g. `vertical`, `scenarioId`, `contactId`) for filtering and debugging where applicable.
 
 ```mermaid
 flowchart LR
-  subgraph fixtures [Fixtures]
+  subgraph hiring [Fixture hiring]
     c5001["candidateId 5001"]
-  end
-  subgraph entityIds [Harness entityId]
     e1l["user-5001-legacy"]
     e1j["user-5001-journey"]
   end
-  c5001 --> e1l
-  c5001 --> e1j
+  subgraph dept [Dept PoC]
+    EID["dept-architecture"]
+  end
   subgraph store [Mem0 storage]
     vec["In-memory vectors\nephemeral"]
     graph["Neo4j graph\noptional Docker"]
   end
+  c5001 --> e1l
+  c5001 --> e1j
   e1l --> vec
   e1j --> vec
+  EID --> vec
 ```
 
 ---
@@ -73,7 +78,7 @@ flowchart LR
 
 When `MEMORY_ENABLED=true` and `longTermMemory` is wired into `SkillRuntimeDeps`, `runSkillInvocation`:
 
-1. Resolves **`entityId`** on the agent context (demo-api `fixture-enrichment` + skill `memory-entity-domain` + `buildFixtureEntityId`).
+1. Resolves **`entityId`** on the agent context (demo-api **`dept-memory`** → `SHARED_DEPT_ARCHITECTURE_ENTITY_ID`, or **`fixture-enrichment`** + `memory-entity-domain` + `buildFixtureEntityId`).
 2. **Searches** Mem0 with the current user turn (or HITL resume text).
 3. Injects a **Long-term memory** section into the system prompt (vector hits; plus **Related entities (graph)** when Neo4j is enabled and Mem0 returns triples).
 4. Runs the existing ReAct loop and MCP tools.
@@ -242,7 +247,8 @@ To run Ollama on the host and only Neo4j in Docker: [`.devcontainer/docker-compo
 ## Public API
 
 - `createLongTermMemoryClient()` — async factory returning a `LongTermMemoryClient`.
-- `seedDemoData(client)` — loads demo conversations per **`user-{id}-legacy`** and **`user-{id}-journey`** using **`infer: false`** (Mem0 embeds each message; no LLM fact-extraction pass, so startup stays fast).
+- `seedDemoData(client)` — loads demo conversations (shared **`dept-architecture`** seed and any fixture-aligned seeds) using **`infer: false`** (Mem0 embeds each message; no LLM fact-extraction pass, so startup stays fast).
+- `SHARED_DEPT_ARCHITECTURE_ENTITY_ID` — fixed string **`dept-architecture`** for the department PoC.
 - `buildFixtureEntityId(contactId, domain)` — maps fixture candidate id + **`journey` \| `legacy`** to `entityId`.
 - `buildMemoryConfigFromEnv()` — inspect or reuse Mem0 config.
 - `DEMO_SEED_CONVERSATIONS` — raw seed definitions for tests or docs.

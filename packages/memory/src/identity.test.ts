@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { buildFixtureEntityId } from "./identity.js";
+import { buildFixtureEntityId, SHARED_DEPT_ARCHITECTURE_ENTITY_ID } from "./identity.js";
+
+describe("SHARED_DEPT_ARCHITECTURE_ENTITY_ID", () => {
+  it("is the fixed shared department namespace for dept-memory PoC", () => {
+    expect(SHARED_DEPT_ARCHITECTURE_ENTITY_ID).toBe("dept-architecture");
+  });
+});
 
 describe("buildFixtureEntityId", () => {
   it("maps fixture contact IDs with domain suffix", () => {

@@ -5,12 +5,14 @@
 
 import type { LoadedSkill } from "@agent-harness/skill-loader";
 import {
+  getArchitectureDeptFixture,
   getContactFixture,
   SCENARIO_CONTRACTS,
 } from "@agent-harness/adapters-mock";
 import type { ScenarioId } from "@agent-harness/adapters-mock";
 import {
   buildFixtureEntityId,
+  SHARED_DEPT_ARCHITECTURE_ENTITY_ID,
   type MemoryEntityDomain,
 } from "@agent-harness/memory";
 
@@ -95,6 +97,32 @@ const defaultRunContextStrategy: RunContextStrategy = {
   enrichContext: (ctx, _skill) => ({ ...(ctx ?? {}) }),
 };
 
+const deptMemoryStrategy: RunContextStrategy = {
+  mergeFromInput: (_input, explicit) => ({ ...(explicit ?? {}) }),
+  enrichContext: (ctx, _skill) => {
+    const base = { ...(ctx ?? {}) };
+    const explicitEntity =
+      typeof base.entityId === "string" && base.entityId.trim()
+        ? base.entityId.trim()
+        : undefined;
+    const architectureDept = getArchitectureDeptFixture();
+    const memoryVertical =
+      typeof base.memoryVertical === "string" && base.memoryVertical.trim()
+        ? base.memoryVertical.trim()
+        : "architecture";
+    if (!memoryEnabledFromEnv()) {
+      return { ...base, architectureDept };
+    }
+    const entityId = explicitEntity ?? SHARED_DEPT_ARCHITECTURE_ENTITY_ID;
+    return {
+      ...base,
+      architectureDept,
+      entityId,
+      memoryVertical,
+    };
+  },
+};
+
 const fixtureEnrichmentStrategy: RunContextStrategy = {
   mergeFromInput: (input, explicit) => {
     const parsed = parseHirerIdsFromInput(input);
@@ -173,6 +201,7 @@ const fixtureEnrichmentStrategy: RunContextStrategy = {
 };
 
 const strategiesByName = new Map<string, RunContextStrategy>([
+  ["dept-memory", deptMemoryStrategy],
   ["fixture-enrichment", fixtureEnrichmentStrategy],
 ]);
 

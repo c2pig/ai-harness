@@ -1,5 +1,6 @@
 export {
   buildFixtureEntityId,
+  SHARED_DEPT_ARCHITECTURE_ENTITY_ID,
   type MemoryEntityDomain,
 } from "./identity.js";
 export { buildMemoryConfigFromEnv } from "./config.js";

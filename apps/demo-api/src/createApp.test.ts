@@ -53,27 +53,24 @@ describe("demo-api", () => {
     const res = await request(app).get("/meta/catalogue");
     expect(res.status).toBe(200);
     const names = (res.body.skills ?? []).map((s: { name: string }) => s.name);
+    expect(names).toContain("accumulate-knowledge-arch");
     expect(names).toContain("evidence-gated-reply");
     expect(names).toContain("demo-echo");
-    expect(names).toContain("job-interview-recruiter");
-    expect(names).toContain("person-journey-analytics");
-    expect(names).toContain("mortgage-planning-consult");
-    expect(names).toContain("property-search-consult");
-    expect(names).toHaveLength(10);
+    expect(names).toHaveLength(7);
     expect(names).not.toContain("demo-summary");
   });
 
-  it("POST /runs defaults skill to job-interview-recruiter when skillName omitted", async () => {
+  it("POST /runs defaults skill to accumulate-knowledge-arch when skillName omitted", async () => {
     const res = await request(app).post("/runs").send({
       input: "hello world",
     });
     expect(res.status).toBe(200);
-    expect(mockRun.mock.calls[0]?.[0]?.skill?.id).toBe("job-interview-recruiter");
+    expect(mockRun.mock.calls[0]?.[0]?.skill?.id).toBe("accumulate-knowledge-arch");
   });
 
-  it("POST /runs job-interview-recruiter calls harness and echoes threadId", async () => {
+  it("POST /runs accumulate-knowledge-arch calls harness and echoes threadId", async () => {
     const res = await request(app).post("/runs").send({
-      skillName: "job-interview-recruiter",
+      skillName: "accumulate-knowledge-arch",
       input: "hello world",
     });
     expect(res.status).toBe(200);
@@ -101,14 +98,14 @@ describe("demo-api", () => {
       });
 
     const first = await request(app).post("/runs").send({
-      skillName: "job-interview-recruiter",
+      skillName: "accumulate-knowledge-arch",
       input: "one",
     });
     expect(first.status).toBe(200);
     const tid = first.body.threadId as string;
 
     const second = await request(app).post("/runs").send({
-      skillName: "job-interview-recruiter",
+      skillName: "accumulate-knowledge-arch",
       input: "two",
       threadId: tid,
     });
@@ -127,7 +124,7 @@ describe("demo-api", () => {
     });
 
     const first = await request(app).post("/runs").send({
-      skillName: "job-interview-recruiter",
+      skillName: "accumulate-knowledge-arch",
       input: "x",
     });
     expect(first.status).toBe(200);
@@ -139,7 +136,7 @@ describe("demo-api", () => {
       threadId: tid,
     });
     expect(second.status).toBe(400);
-    expect(second.body.error).toMatch(/job-interview-recruiter/);
+    expect(second.body.error).toMatch(/accumulate-knowledge-arch/);
   });
 
   it("POST /runs then resume for HITL skill", async () => {

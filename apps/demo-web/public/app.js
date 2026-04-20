@@ -32,14 +32,8 @@ let CATALOGUE_SKILLS = [];
 
 /** Example prompts per skill (fixtures: candidate 5001 → job 101 where applicable). */
 const SKILL_INPUT_EXAMPLES = {
-  "job-interview-recruiter":
-    "Candidate 5001: I'm exploring senior backend roles in Sydney; ask me about salary expectations and notice period.",
-  "property-search-consult":
-    "Candidate 5002: first-home buyer, budget up to 1.2M, prefer inner suburbs with good schools.",
-  "mortgage-planning-consult":
-    "Candidate 5001: I have a deposit saved and a job offer — help me sanity-check borrowing vs settlement timing.",
-  "person-journey-analytics":
-    "Candidate 5001: Summarize what you know about me across career, property, and finance from memory.",
+  "accumulate-knowledge-arch":
+    "What is Jordan Okonkwo focused on right now across Project Aurora and Nexus?",
   "evidence-gated-reply":
     "Draft message variants for contact 5001 on job 101 (match context from fixtures).",
   "property-listing-touchpoint":
@@ -179,15 +173,15 @@ async function loadCatalogue() {
 
 function fillSkillSelect() {
   if (!CATALOGUE_SKILLS.length) {
-    skillNameSelect.innerHTML = `<option value="job-interview-recruiter">job-interview-recruiter</option>`;
+    skillNameSelect.innerHTML = `<option value="accumulate-knowledge-arch">accumulate-knowledge-arch</option>`;
     return;
   }
   skillNameSelect.innerHTML = CATALOGUE_SKILLS.map(
     (s) =>
       `<option value="${escapeHtml(s.name)}">${escapeHtml(s.name)}</option>`,
   ).join("");
-  const preferred = CATALOGUE_SKILLS.find((s) => s.name === "job-interview-recruiter");
-  if (preferred) skillNameSelect.value = "job-interview-recruiter";
+  const preferred = CATALOGUE_SKILLS.find((s) => s.name === "accumulate-knowledge-arch");
+  if (preferred) skillNameSelect.value = "accumulate-knowledge-arch";
 }
 
 function updateSkillMeta() {

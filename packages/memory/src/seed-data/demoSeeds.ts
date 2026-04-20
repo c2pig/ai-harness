@@ -1,4 +1,5 @@
 import type { LongTermMemoryMessage } from "@agent-harness/contracts";
+import { SHARED_DEPT_ARCHITECTURE_ENTITY_ID } from "../identity.js";
 
 export type SeedConversation = {
   entityId: string;
@@ -7,173 +8,97 @@ export type SeedConversation = {
 };
 
 /**
- * Deterministic demo memories aligned with adapters-mock candidateContexts 5001–5003.
- * **Legacy** domain: original hiring + property cross-domain stubs (evidence-gated style).
- * **Journey** domain: multi-step persona for journey skills (recruiter / property / finance).
+ * Demo seed for the shared department namespace: Maya (EA), Jordan (SA), Riley (TA);
+ * Project Nexus (platform) and Project Aurora (onboarding). Loaded at API startup with `infer: false`.
  */
 export const DEMO_SEED_CONVERSATIONS: SeedConversation[] = [
   {
-    entityId: "user-5001-legacy",
+    entityId: SHARED_DEPT_ARCHITECTURE_ENTITY_ID,
     metadata: {
-      contactId: 5001,
-      vertical: "cross_domain",
+      vertical: "architecture",
       seed: true,
-      memoryEntityDomain: "legacy",
+      projects: ["nexus", "aurora"],
     },
     messages: [
       {
         role: "user",
         content:
-          "Record hiring context: Contact 5001 (Ada Chen) — scenario S1 hirer liked at least one candidate; strong alignment with senior backend role at job 101.",
+          "Maya Chen (Enterprise Architect): We run two programs under one architecture board. Give me canonical one-liners for exec readouts — Project Nexus vs Project Aurora.",
       },
       {
         role: "assistant",
         content:
-          "Saved. Ada Chen is a favored candidate for the backend role; hirer feedback is positive.",
+          "Nexus: consolidate integration and identity onto a governed platform with phased migration. Aurora: deliver a compliant customer onboarding capability with solution options and vendor gates.",
       },
       {
         role: "user",
         content:
-          "Record property context: Ada Chen is a first home buyer under contract on 12 Harbor View; settlement targeted for May 2026.",
+          "Maya: Who owns delivery PM for Nexus and Aurora respectively?",
       },
       {
         role: "assistant",
         content:
-          "Saved. Ada Chen has an active property purchase as a first-time buyer.",
-      },
-    ],
-  },
-  {
-    entityId: "user-5001-journey",
-    metadata: {
-      contactId: 5001,
-      vertical: "journey",
-      seed: true,
-      memoryEntityDomain: "journey",
-    },
-    messages: [
-      {
-        role: "user",
-        content:
-          "Candidate 5001: I'm Ada Chen, targeting a senior backend role in Sydney; I want AUD 170–185k and can start after four weeks' notice.",
-      },
-      {
-        role: "assistant",
-        content:
-          "Noted: senior backend, Sydney, salary band, four-week notice — saved for your journey profile.",
+          "Nexus program PM: Priya Nair (priya.nair@techcorp.example). Aurora program PM: Sam Okada (sam.okada@techcorp.example).",
       },
       {
         role: "user",
         content:
-          "We're also buying our first home in the inner west; budget up to 1.5M and settlement aimed for May 2026.",
+          "Maya: Where should engineering anchor the implementation stack for Nexus services?",
       },
       {
         role: "assistant",
         content:
-          "Recorded: first-home purchase, inner west, budget ceiling, May settlement timeline.",
-      },
-    ],
-  },
-  {
-    entityId: "user-5002-legacy",
-    metadata: {
-      contactId: 5002,
-      vertical: "cross_domain",
-      seed: true,
-      memoryEntityDomain: "legacy",
-    },
-    messages: [
-      {
-        role: "user",
-        content:
-          "Record hiring context: Contact 5002 (Ben Okoro) — scenario S4 no suitable CVs in 10+ days; job 202; supply gap in market.",
-      },
-      {
-        role: "assistant",
-        content:
-          "Saved. Ben Okoro's pipeline reflects a thin market for the role requirements.",
+          "Target stack for Nexus services: Node.js (APIs), React (internal ops consoles), AWS (ECS, RDS, Cognito) — aligned with the technical architecture track.",
       },
       {
         role: "user",
         content:
-          "Record property context: Ben Okoro is also pre-approved for a mortgage and viewing units in the CBD.",
+          "Jordan Okonkwo (Solution Architect): I'm leading solution-option development for Project Aurora — KYC-lite, document capture, CRM handoff; audit trail and ap-southeast-2 residency. Produce a solution-option template.",
       },
       {
         role: "assistant",
         content:
-          "Saved. Ben Okoro is actively searching for a city apartment with financing in place.",
-      },
-    ],
-  },
-  {
-    entityId: "user-5002-journey",
-    metadata: {
-      contactId: 5002,
-      vertical: "journey",
-      seed: true,
-      memoryEntityDomain: "journey",
-    },
-    messages: [
-      {
-        role: "user",
-        content:
-          "Candidate 5002: Ben Okoro, data analyst — looking at Singapore roles around SGD 100–115k; mortgage pre-approval in place for a CBD apartment.",
-      },
-      {
-        role: "assistant",
-        content:
-          "Captured: analyst track, Singapore salary range, financing pre-approved for CBD apartment search.",
-      },
-    ],
-  },
-  {
-    entityId: "user-5003-legacy",
-    metadata: {
-      contactId: 5003,
-      vertical: "cross_domain",
-      seed: true,
-      memoryEntityDomain: "legacy",
-    },
-    messages: [
-      {
-        role: "user",
-        content:
-          "Record hiring context: Contact 5003 (Carol Diaz) — scenario S5 interview went well for job 303; strong culture fit signal.",
-      },
-      {
-        role: "assistant",
-        content: "Saved. Carol Diaz had a successful interview round with positive panel notes.",
+          "Template outline: scope, NFRs (residency ap-southeast-2), compliance/audit trail, risks, decisions — ready to iterate.",
       },
       {
         role: "user",
         content:
-          "Record property context: Carol Diaz is selling an investment property while recruiting for a new role.",
+          "Jordan: Add vendor selection as an explicit pending decision with criteria: support SLAs, integration effort, local presence.",
       },
       {
         role: "assistant",
         content:
-          "Saved. Carol Diaz is managing a property sale in parallel with her job search.",
+          "Updated: Vendor selection is pending with criteria — support SLAs, integration effort, local presence.",
       },
-    ],
-  },
-  {
-    entityId: "user-5003-journey",
-    metadata: {
-      contactId: 5003,
-      vertical: "journey",
-      seed: true,
-      memoryEntityDomain: "journey",
-    },
-    messages: [
       {
         role: "user",
         content:
-          "Candidate 5003: Carol Diaz balancing a job offer in marketing with selling an investment unit; wants clarity on deposit timing vs start date.",
+          "Riley Park (Technical Architect): Confirm Nexus reference stack and PM for delivery sequencing.",
       },
       {
         role: "assistant",
         content:
-          "Noted: marketing offer, investment sale in flight, coordinating deposit and employment start — saved to journey memory.",
+          "Reference stack: Node.js services, React internal UIs, AWS (ECS, RDS, Cognito). Nexus PM for sequencing: Priya Nair (priya.nair@techcorp.example).",
+      },
+      {
+        role: "user",
+        content:
+          "Riley: I'm defining Nexus integration patterns (eventing vs sync API). Jordan owns Aurora UX flows; my current focus is Nexus delivery and platform patterns.",
+      },
+      {
+        role: "assistant",
+        content:
+          "Noted: Riley’s current focus is Nexus delivery and integration/platform patterns; Aurora solution work stays with Jordan’s track.",
+      },
+      {
+        role: "user",
+        content:
+          "Maya Chen: For the board slide — what is Jordan focused on right now in terms of program work?",
+      },
+      {
+        role: "assistant",
+        content:
+          "Jordan Okonkwo (Solution Architect) is driving Project Aurora solution-option development (template iterations) and vendor evaluation; vendor selection is pending with SLA, integration effort, and local presence criteria. Aurora PM is Sam Okada (sam.okada@techcorp.example).",
       },
     ],
   },

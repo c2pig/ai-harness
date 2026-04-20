@@ -128,17 +128,43 @@ describe("enrichRunContext", () => {
     expect(out.memoryVertical).toBe("hiring");
   });
 
-  it("adds entityId with journey suffix when skill declares journey domain", () => {
+  it("dept-memory adds architectureDept and shared entityId when MEMORY_ENABLED", () => {
     vi.stubEnv("MEMORY_ENABLED", "true");
     const out = enrichRunContext(
       minimalSkill({
-        id: "job-interview-recruiter",
-        contextStrategy: "fixture-enrichment",
-        memoryEntityDomain: "journey",
+        id: "accumulate-knowledge-arch",
+        contextStrategy: "dept-memory",
       }),
-      { candidateId: 5001 },
+      {},
     );
-    expect(out.entityId).toBe("user-5001-journey");
+    expect(out.entityId).toBe("dept-architecture");
+    expect(out.memoryVertical).toBe("architecture");
+    expect(out.architectureDept).toBeDefined();
+    expect((out.architectureDept as { department?: string }).department).toBe("Architecture");
+  });
+
+  it("dept-memory allows explicit entityId override when MEMORY_ENABLED", () => {
+    vi.stubEnv("MEMORY_ENABLED", "true");
+    const out = enrichRunContext(
+      minimalSkill({
+        id: "accumulate-knowledge-arch",
+        contextStrategy: "dept-memory",
+      }),
+      { entityId: "custom-entity" },
+    );
+    expect(out.entityId).toBe("custom-entity");
+  });
+
+  it("dept-memory injects architectureDept without entityId when memory disabled", () => {
+    const out = enrichRunContext(
+      minimalSkill({
+        id: "accumulate-knowledge-arch",
+        contextStrategy: "dept-memory",
+      }),
+      {},
+    );
+    expect(out.entityId).toBeUndefined();
+    expect(out.architectureDept).toBeDefined();
   });
 
   afterEach(() => {

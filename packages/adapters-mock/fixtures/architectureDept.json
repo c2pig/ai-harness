@@ -1,0 +1,46 @@
+{
+  "department": "Architecture",
+  "organization": "TechCorp example",
+  "people": [
+    {
+      "id": "maya",
+      "name": "Maya Chen",
+      "role": "Enterprise Architect",
+      "primaryPrograms": ["Project Nexus", "Project Aurora steering"]
+    },
+    {
+      "id": "jordan",
+      "name": "Jordan Okonkwo",
+      "role": "Solution Architect",
+      "primaryPrograms": ["Project Aurora solution options"]
+    },
+    {
+      "id": "riley",
+      "name": "Riley Park",
+      "role": "Technical Architect",
+      "primaryPrograms": ["Project Nexus delivery"]
+    }
+  ],
+  "projects": [
+    {
+      "id": "nexus",
+      "name": "Project Nexus",
+      "summary": "Enterprise platform consolidation; integration hub, identity, API standards, phased migration.",
+      "programPm": {
+        "name": "Priya Nair",
+        "email": "priya.nair@techcorp.example"
+      },
+      "stack": ["Node.js", "React", "AWS"]
+    },
+    {
+      "id": "aurora",
+      "name": "Project Aurora",
+      "summary": "Customer onboarding capability; solution options and vendor evaluation.",
+      "programPm": {
+        "name": "Sam Okada",
+        "email": "sam.okada@techcorp.example"
+      },
+      "pendingDecisions": ["vendor selection"]
+    }
+  ]
+}
