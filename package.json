@@ -3,20 +3,22 @@
   "version": "0.2.0",
   "private": true,
   "type": "module",
+  "packageManager": "pnpm@9.15.9",
   "description": "Agent harness monorepo — generic skills, MCP, and orchestration demo",
-  "workspaces": [
-    "packages/*",
-    "apps/*"
-  ],
   "scripts": {
     "build": "tsc -b tsconfig.build.json",
     "postbuild": "node scripts/copy-adapters-mock-fixtures.mjs",
     "clean": "rm -rf dist packages/*/dist apps/*/dist; find packages apps \\( -name '.tsbuildinfo' -o -name 'tsconfig.tsbuildinfo' -o -name '*.tsbuildinfo' \\) -delete 2>/dev/null || true; find packages apps -type f \\( -path '*/src/*.js' -o -path '*/src/*.d.ts' -o -path '*/src/*.d.ts.map' \\) -delete 2>/dev/null || true",
-    "dev": "npm run build && node dist/apps/demo-api/server.js",
-    "dev:memory": "MEMORY_ENABLED=true npm run dev",
+    "dev": "pnpm run build && node dist/apps/demo-api/server.js",
+    "dev:memory": "MEMORY_ENABLED=true pnpm run dev",
     "dev:tsx": "tsx apps/demo-api/src/server.ts",
-    "memory:up": "docker compose -f .devcontainer/docker-compose.yml up -d ollama neo4j",
-    "memory:down": "docker compose -f .devcontainer/docker-compose.yml down",
+    "colima:start": "colima start -p harness -c 2 -m 8 -d 60",
+    "colima:stop": "colima stop -p harness",
+    "memory:up": "DOCKER_CONTEXT=colima-harness docker-compose -f .devcontainer/docker-compose.yml up -d ollama neo4j",
+    "memory:down": "DOCKER_CONTEXT=colima-harness docker-compose -f .devcontainer/docker-compose.yml down",
+    "logs:neo4j": "DOCKER_CONTEXT=colima-harness docker logs -f devcontainer-neo4j-1",
+    "logs:ollama": "DOCKER_CONTEXT=colima-harness docker logs -f devcontainer-ollama-1",
+    "logs:all": "sh -c 'DOCKER_CONTEXT=colima-harness docker logs -f devcontainer-neo4j-1 & DOCKER_CONTEXT=colima-harness docker logs -f devcontainer-ollama-1 & wait'",
     "start": "node dist/apps/demo-api/server.js",
     "test": "vitest run",
     "test:watch": "vitest"
@@ -29,5 +31,10 @@
   },
   "engines": {
     "node": ">=18.0.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "@langchain/core": "0.3.80"
+    }
   }
 }

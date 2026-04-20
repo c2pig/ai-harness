@@ -9,3 +9,4 @@ await cp(
   join(root, "packages", "adapters-mock", "dist", "fixtures"),
   { recursive: true },
 );
+console.log("[postbuild] adapters-mock fixtures copied to dist/fixtures.");

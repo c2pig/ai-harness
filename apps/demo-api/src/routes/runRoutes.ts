@@ -31,7 +31,7 @@ export function registerRunRoutes(app: Express, deps: DemoApiDeps): void {
       return;
     }
     const body = parsed.data;
-    const skillName = body.skillName?.trim() || "demo-echo";
+    const skillName = body.skillName?.trim() || "job-interview-recruiter";
 
     if (!skillsCatalog.has(skillName)) {
       res.status(400).json({ error: `Unknown skill: ${skillName}` });

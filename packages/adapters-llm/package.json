@@ -15,7 +15,7 @@
     "build": "tsc -p tsconfig.json"
   },
   "dependencies": {
-    "@agent-harness/contracts": "0.2.0",
+    "@agent-harness/contracts": "workspace:*",
     "openai": "^4.77.0",
     "zod": "^3.23.8"
   },

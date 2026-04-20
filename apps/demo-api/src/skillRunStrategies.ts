@@ -9,14 +9,20 @@ import {
   SCENARIO_CONTRACTS,
 } from "@agent-harness/adapters-mock";
 import type { ScenarioId } from "@agent-harness/adapters-mock";
-import { resolveUserId } from "@agent-harness/memory";
+import {
+  buildFixtureEntityId,
+  type MemoryEntityDomain,
+} from "@agent-harness/memory";
 
 export type RunContextStrategy = {
   mergeFromInput(
     input: string,
     explicit: Record<string, unknown> | undefined,
   ): Record<string, unknown> | undefined;
-  enrichContext(ctx: Record<string, unknown> | undefined): Record<string, unknown>;
+  enrichContext(
+    ctx: Record<string, unknown> | undefined,
+    skill: LoadedSkill,
+  ): Record<string, unknown>;
 };
 
 function memoryEnabledFromEnv(): boolean {
@@ -86,7 +92,7 @@ export function parseHirerIdsFromInput(input: string): Record<string, number> {
 
 const defaultRunContextStrategy: RunContextStrategy = {
   mergeFromInput: (_input, explicit) => explicit,
-  enrichContext: (ctx) => ({ ...(ctx ?? {}) }),
+  enrichContext: (ctx, _skill) => ({ ...(ctx ?? {}) }),
 };
 
 const fixtureEnrichmentStrategy: RunContextStrategy = {
@@ -94,8 +100,13 @@ const fixtureEnrichmentStrategy: RunContextStrategy = {
     const parsed = parseHirerIdsFromInput(input);
     return { ...parsed, ...(explicit ?? {}) };
   },
-  enrichContext: (ctx) => {
+  enrichContext: (ctx, skill) => {
     const base = { ...(ctx ?? {}) };
+    const explicitEntity =
+      typeof base.entityId === "string" && base.entityId.trim()
+        ? base.entityId.trim()
+        : undefined;
+
     const raw = base.candidateId;
     const num =
       typeof raw === "number"
@@ -103,7 +114,9 @@ const fixtureEnrichmentStrategy: RunContextStrategy = {
         : typeof raw === "string"
           ? Number(raw)
           : NaN;
-    if (!Number.isFinite(num)) return base;
+    if (!Number.isFinite(num)) {
+      return explicitEntity ? { ...base, entityId: explicitEntity } : base;
+    }
 
     const fixture = getContactFixture(num);
     const scenarioId = resolveScenarioId(base.scenarioHint, fixture?.recommendedScenarioId);
@@ -137,8 +150,11 @@ const fixtureEnrichmentStrategy: RunContextStrategy = {
       confidence: 0,
     };
 
-    const resolvedMem0 = memoryEnabledFromEnv() ? resolveUserId(num) : undefined;
-    const mem0UserId = resolvedMem0;
+    const domain: MemoryEntityDomain = skill.memoryEntityDomain ?? "legacy";
+    const resolvedEntityId =
+      memoryEnabledFromEnv() ? buildFixtureEntityId(num, domain) : undefined;
+    const entityId = explicitEntity ?? resolvedEntityId;
+
     const memoryVertical =
       typeof base.memoryVertical === "string" && base.memoryVertical.trim()
         ? base.memoryVertical.trim()
@@ -151,9 +167,7 @@ const fixtureEnrichmentStrategy: RunContextStrategy = {
       jobId,
       matchId,
       orchestrationSeed,
-      ...(mem0UserId
-        ? { mem0UserId, memoryVertical }
-        : {}),
+      ...(entityId ? { entityId, memoryVertical } : {}),
     };
   },
 };
@@ -182,5 +196,5 @@ export function enrichRunContext(
   skill: LoadedSkill,
   ctx: Record<string, unknown> | undefined,
 ): Record<string, unknown> {
-  return runContextStrategyFor(skill).enrichContext(ctx);
+  return runContextStrategyFor(skill).enrichContext(ctx, skill);
 }

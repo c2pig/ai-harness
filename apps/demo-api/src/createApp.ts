@@ -66,18 +66,30 @@ export async function createApp(): Promise<CreateAppResult> {
 
   let longTermMemory: LongTermMemoryClient | undefined;
   if (process.env.MEMORY_ENABLED === "true") {
+    console.log(
+      "[demo-api] Initializing long-term memory (Mem0: gateway LLM + Ollama embed + optional Neo4j); default Mem0.add infer=false (embed-only persist after skills).",
+    );
     try {
       const memoryMod = await import("@agent-harness/memory");
       longTermMemory = await memoryMod.createLongTermMemoryClient();
       await memoryMod.seedDemoData(longTermMemory);
-      consoleLogger.info(
-        {},
-        "Long-term memory (Mem0) enabled: client ready and demo data seeded.",
+      console.log(
+        "[demo-api] Long-term memory (Mem0) enabled: client ready and demo data seeded.",
       );
     } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
       consoleLogger.error(
-        { err: err instanceof Error ? err.message : String(err) },
+        {
+          err: msg,
+          hint:
+            msg.includes("fetch") || msg === "fetch failed"
+              ? "Ollama is probably down or unreachable. Run: pnpm run colima:start && pnpm run memory:up — then curl -s http://127.0.0.1:11434/api/tags"
+              : undefined,
+        },
         "Long-term memory init failed; continuing without Mem0.",
+      );
+      console.log(
+        "[demo-api] Reminder: Mem0 needs Ollama for embeddings. Ensure containers are up (e.g. `pnpm run memory:up`), Ollama is reachable at OLLAMA_URL (default http://127.0.0.1:11434), and the embed model is pulled.",
       );
     }
   }
@@ -86,6 +98,7 @@ export async function createApp(): Promise<CreateAppResult> {
     llm,
     checkpointer,
     mcpPool,
+    errorLogger: consoleLogger,
     ...(longTermMemory ? { longTermMemory } : {}),
   };
 

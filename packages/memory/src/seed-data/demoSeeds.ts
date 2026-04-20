@@ -1,19 +1,25 @@
 import type { LongTermMemoryMessage } from "@agent-harness/contracts";
 
 export type SeedConversation = {
-  userId: string;
+  entityId: string;
   messages: LongTermMemoryMessage[];
   metadata?: Record<string, unknown>;
 };
 
 /**
  * Deterministic demo memories aligned with adapters-mock candidateContexts 5001–5003.
- * Hiring facts mirror recommendedScenarioId; property facts are fictional cross-domain story.
+ * **Legacy** domain: original hiring + property cross-domain stubs (evidence-gated style).
+ * **Journey** domain: multi-step persona for journey skills (recruiter / property / finance).
  */
 export const DEMO_SEED_CONVERSATIONS: SeedConversation[] = [
   {
-    userId: "user-5001",
-    metadata: { contactId: 5001, vertical: "cross_domain", seed: true },
+    entityId: "user-5001-legacy",
+    metadata: {
+      contactId: 5001,
+      vertical: "cross_domain",
+      seed: true,
+      memoryEntityDomain: "legacy",
+    },
     messages: [
       {
         role: "user",
@@ -38,8 +44,44 @@ export const DEMO_SEED_CONVERSATIONS: SeedConversation[] = [
     ],
   },
   {
-    userId: "user-5002",
-    metadata: { contactId: 5002, vertical: "cross_domain", seed: true },
+    entityId: "user-5001-journey",
+    metadata: {
+      contactId: 5001,
+      vertical: "journey",
+      seed: true,
+      memoryEntityDomain: "journey",
+    },
+    messages: [
+      {
+        role: "user",
+        content:
+          "Candidate 5001: I'm Ada Chen, targeting a senior backend role in Sydney; I want AUD 170–185k and can start after four weeks' notice.",
+      },
+      {
+        role: "assistant",
+        content:
+          "Noted: senior backend, Sydney, salary band, four-week notice — saved for your journey profile.",
+      },
+      {
+        role: "user",
+        content:
+          "We're also buying our first home in the inner west; budget up to 1.5M and settlement aimed for May 2026.",
+      },
+      {
+        role: "assistant",
+        content:
+          "Recorded: first-home purchase, inner west, budget ceiling, May settlement timeline.",
+      },
+    ],
+  },
+  {
+    entityId: "user-5002-legacy",
+    metadata: {
+      contactId: 5002,
+      vertical: "cross_domain",
+      seed: true,
+      memoryEntityDomain: "legacy",
+    },
     messages: [
       {
         role: "user",
@@ -64,8 +106,34 @@ export const DEMO_SEED_CONVERSATIONS: SeedConversation[] = [
     ],
   },
   {
-    userId: "user-5003",
-    metadata: { contactId: 5003, vertical: "cross_domain", seed: true },
+    entityId: "user-5002-journey",
+    metadata: {
+      contactId: 5002,
+      vertical: "journey",
+      seed: true,
+      memoryEntityDomain: "journey",
+    },
+    messages: [
+      {
+        role: "user",
+        content:
+          "Candidate 5002: Ben Okoro, data analyst — looking at Singapore roles around SGD 100–115k; mortgage pre-approval in place for a CBD apartment.",
+      },
+      {
+        role: "assistant",
+        content:
+          "Captured: analyst track, Singapore salary range, financing pre-approved for CBD apartment search.",
+      },
+    ],
+  },
+  {
+    entityId: "user-5003-legacy",
+    metadata: {
+      contactId: 5003,
+      vertical: "cross_domain",
+      seed: true,
+      memoryEntityDomain: "legacy",
+    },
     messages: [
       {
         role: "user",
@@ -85,6 +153,27 @@ export const DEMO_SEED_CONVERSATIONS: SeedConversation[] = [
         role: "assistant",
         content:
           "Saved. Carol Diaz is managing a property sale in parallel with her job search.",
+      },
+    ],
+  },
+  {
+    entityId: "user-5003-journey",
+    metadata: {
+      contactId: 5003,
+      vertical: "journey",
+      seed: true,
+      memoryEntityDomain: "journey",
+    },
+    messages: [
+      {
+        role: "user",
+        content:
+          "Candidate 5003: Carol Diaz balancing a job offer in marketing with selling an investment unit; wants clarity on deposit timing vs start date.",
+      },
+      {
+        role: "assistant",
+        content:
+          "Noted: marketing offer, investment sale in flight, coordinating deposit and employment start — saved to journey memory.",
       },
     ],
   },

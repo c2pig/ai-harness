@@ -4,7 +4,7 @@
   "service": "app",
   "workspaceFolder": "/workspace",
   "forwardPorts": [4010, 11434, 7474, 7687],
-  "postCreateCommand": "npm install",
+  "postCreateCommand": "corepack enable && pnpm install",
   "customizations": {
     "vscode": {
       "extensions": ["dbaeumer.vscode-eslint"]

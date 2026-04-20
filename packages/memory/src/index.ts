@@ -1,4 +1,7 @@
-export { resolveUserId } from "./identity.js";
+export {
+  buildFixtureEntityId,
+  type MemoryEntityDomain,
+} from "./identity.js";
 export { buildMemoryConfigFromEnv } from "./config.js";
 export {
   Mem0LongTermMemoryClient,

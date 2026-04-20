@@ -52,4 +52,27 @@ mcp-servers:
     const s = parseSkillMarkdown("data-analysis", raw, "/tmp");
     expect(s.mcpServerIds).toEqual(["mcp-tools-generic", "mcp-mock-workflow"]);
   });
+
+  it("parses memory-entity-domain", () => {
+    const raw = `---
+name: test-skill
+description: x
+memory-entity-domain: journey
+---
+`;
+    const s = parseSkillMarkdown("test-skill", raw, "/tmp");
+    expect(s.memoryEntityDomain).toBe("journey");
+  });
+
+  it("throws on invalid memory-entity-domain", () => {
+    const raw = `---
+name: test-skill
+description: x
+memory-entity-domain: other
+---
+`;
+    expect(() => parseSkillMarkdown("test-skill", raw, "/tmp")).toThrow(
+      /memory-entity-domain/,
+    );
+  });
 });

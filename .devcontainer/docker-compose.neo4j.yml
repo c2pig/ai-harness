@@ -1,0 +1,22 @@
+# Neo4j only — use when Ollama runs on the host (brew/colima host install).
+# Saves ~8.7GB Docker image space vs the full ollama+neo4j stack.
+# Set OLLAMA_URL=http://127.0.0.1:11434 (default) and run: ollama serve && ollama pull ...
+
+services:
+  neo4j:
+    image: neo4j:5-community
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    environment:
+      NEO4J_AUTH: neo4j/harness-memory-local
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "cypher-shell -u neo4j -p harness-memory-local 'RETURN 1' || exit 1",
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 12
+      start_period: 45s

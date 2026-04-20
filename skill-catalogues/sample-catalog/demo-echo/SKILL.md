@@ -5,6 +5,7 @@ metadata:
   version: "0.2.0"
   product: demo
 hitl: false
+memory-entity-domain: legacy
 ---
 
 # Demo echo

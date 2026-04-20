@@ -12,6 +12,7 @@ import type {
 } from "./types.js";
 
 const LONG_TERM_MEMORY_MAX_LINES = 12;
+const LONG_TERM_MEMORY_MAX_GRAPH_LINES = 8;
 
 function buildSystemPrompt(
   skill: LoadedSkill,
@@ -35,18 +36,39 @@ async function buildLongTermMemoryBlock(
   searchQuery: string,
 ): Promise<string> {
   if (!deps.longTermMemory) return "";
-  const uid = context.mem0UserId;
-  if (typeof uid !== "string" || !uid.trim()) return "";
+  const entityId = context.entityId;
+  if (typeof entityId !== "string" || !entityId.trim()) return "";
   try {
-    const { results } = await deps.longTermMemory.search(searchQuery.trim() || ".", {
-      userId: uid.trim(),
-      limit: 8,
-    });
-    if (!results.length) return "";
-    return results
+    const { results, relations } = await deps.longTermMemory.search(
+      searchQuery.trim() || ".",
+      {
+        entityId: entityId.trim(),
+        limit: 8,
+      },
+    );
+    const vectorLines = results
       .map((r, i) => `${i + 1}. ${r.memory}`)
-      .slice(0, LONG_TERM_MEMORY_MAX_LINES)
-      .join("\n");
+      .slice(0, LONG_TERM_MEMORY_MAX_LINES);
+    const graphLines =
+      relations?.length ?
+        relations
+          .slice(0, LONG_TERM_MEMORY_MAX_GRAPH_LINES)
+          .map(
+            (t, i) =>
+              `${i + 1}. ${t.source} —[${t.relationship}]→ ${t.destination}`,
+          )
+      : [];
+    const parts: string[] = [];
+    if (vectorLines.length > 0) {
+      parts.push(vectorLines.join("\n"));
+    }
+    if (graphLines.length > 0) {
+      parts.push(
+        "### Related entities (graph)\n" + graphLines.join("\n"),
+      );
+    }
+    if (parts.length === 0) return "";
+    return parts.join("\n\n");
   } catch {
     return "";
   }
@@ -176,8 +198,8 @@ async function maybePersistLongTermMemory(
   resultText: string | undefined,
 ): Promise<void> {
   if (!deps.longTermMemory || !resultText?.trim()) return;
-  const uid = context.mem0UserId;
-  if (typeof uid !== "string" || !uid.trim()) return;
+  const entityId = context.entityId;
+  if (typeof entityId !== "string" || !entityId.trim()) return;
   const vertical =
     typeof context.memoryVertical === "string" && context.memoryVertical.trim()
       ? context.memoryVertical.trim()
@@ -196,14 +218,23 @@ async function maybePersistLongTermMemory(
         { role: "assistant", content: resultText.trim() },
       ],
       {
-        userId: uid.trim(),
+        entityId: entityId.trim(),
         metadata: {
           vertical,
           ...(scenarioId ? { scenarioId } : {}),
         },
       },
     );
-  } catch {
-    /* best-effort persistence */
+  } catch (err) {
+    const message =
+      err instanceof Error ? err.message : typeof err === "string" ? err : String(err);
+    deps.errorLogger?.error(
+      {
+        err: message,
+        stack: err instanceof Error ? err.stack : undefined,
+        entityId: entityId.trim(),
+      },
+      "[skillAgent] longTermMemory.add failed (best-effort persistence)",
+    );
   }
 }

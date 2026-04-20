@@ -8,7 +8,7 @@
     "start": "node ../../dist/apps/mcp-mock-workflow/server.js"
   },
   "dependencies": {
-    "@agent-harness/adapters-mock": "0.2.0",
+    "@agent-harness/adapters-mock": "workspace:*",
     "@modelcontextprotocol/sdk": "^1.12.0",
     "zod": "^3.23.8"
   },

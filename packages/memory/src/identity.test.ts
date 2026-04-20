@@ -1,14 +1,15 @@
 import { describe, expect, it } from "vitest";
-import { resolveUserId } from "./identity.js";
+import { buildFixtureEntityId } from "./identity.js";
 
-describe("resolveUserId", () => {
-  it("maps fixture contact IDs", () => {
-    expect(resolveUserId(5001)).toBe("user-5001");
-    expect(resolveUserId(5002)).toBe("user-5002");
-    expect(resolveUserId(5003)).toBe("user-5003");
+describe("buildFixtureEntityId", () => {
+  it("maps fixture contact IDs with domain suffix", () => {
+    expect(buildFixtureEntityId(5001, "legacy")).toBe("user-5001-legacy");
+    expect(buildFixtureEntityId(5001, "journey")).toBe("user-5001-journey");
+    expect(buildFixtureEntityId(5002, "legacy")).toBe("user-5002-legacy");
+    expect(buildFixtureEntityId(5003, "journey")).toBe("user-5003-journey");
   });
 
   it("returns undefined for unknown contacts", () => {
-    expect(resolveUserId(9999)).toBeUndefined();
+    expect(buildFixtureEntityId(9999, "legacy")).toBeUndefined();
   });
 });

@@ -1,11 +1,23 @@
-/** Maps fixture contact IDs (candidateContexts.json) to stable Mem0 user_id values. */
+/** Maps fixture contact IDs (candidateContexts.json) to stable entity id prefixes. */
 
-const CONTACT_TO_USER_ID: Record<number, string> = {
+const CONTACT_TO_ENTITY_PREFIX: Record<number, string> = {
   5001: "user-5001",
   5002: "user-5002",
   5003: "user-5003",
 };
 
-export function resolveUserId(contactId: number): string | undefined {
-  return CONTACT_TO_USER_ID[contactId];
+/** Memory partition for Mem0 / Neo4j scoping: journey skills vs legacy hiring demos. */
+export type MemoryEntityDomain = "journey" | "legacy";
+
+/**
+ * Builds the Mem0 `userId` filter value (harness: `entityId`) for fixture contacts.
+ * Example: `buildFixtureEntityId(5001, "legacy")` → `user-5001-legacy`
+ */
+export function buildFixtureEntityId(
+  contactId: number,
+  domain: MemoryEntityDomain,
+): string | undefined {
+  const prefix = CONTACT_TO_ENTITY_PREFIX[contactId];
+  if (!prefix) return undefined;
+  return `${prefix}-${domain}`;
 }

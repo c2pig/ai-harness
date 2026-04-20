@@ -1,5 +1,6 @@
 node_modules/
 dist/
+.mem0/
 *.tsbuildinfo
 .tsbuildinfo
 *.d.ts.map

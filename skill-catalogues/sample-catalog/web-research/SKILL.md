@@ -5,6 +5,7 @@ metadata:
   version: "1.0.0"
 mcp-server: mcp-tools-generic
 hitl: false
+memory-entity-domain: legacy
 ---
 
 # Web research

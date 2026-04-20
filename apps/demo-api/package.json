@@ -8,14 +8,14 @@
     "start": "node ../../dist/apps/demo-api/server.js"
   },
   "dependencies": {
-    "@agent-harness/contracts": "0.2.0",
-    "@agent-harness/observability": "0.2.0",
-    "@agent-harness/skill-loader": "0.2.0",
-    "@agent-harness/orchestration-engine": "0.2.0",
-    "@agent-harness/adapters-mock": "0.2.0",
-    "@agent-harness/adapters-llm": "0.2.0",
-    "@agent-harness/ai-harness": "0.2.0",
-    "@agent-harness/memory": "0.2.0",
+    "@agent-harness/contracts": "workspace:*",
+    "@agent-harness/observability": "workspace:*",
+    "@agent-harness/skill-loader": "workspace:*",
+    "@agent-harness/orchestration-engine": "workspace:*",
+    "@agent-harness/adapters-mock": "workspace:*",
+    "@agent-harness/adapters-llm": "workspace:*",
+    "@agent-harness/ai-harness": "workspace:*",
+    "@agent-harness/memory": "workspace:*",
     "@langchain/langgraph-checkpoint": "~0.0.17",
     "express": "^4.21.2"
   },
