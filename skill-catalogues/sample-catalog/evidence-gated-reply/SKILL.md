@@ -7,6 +7,7 @@ metadata:
 mcp-server: mcp-mock-workflow
 hitl: true
 context-strategy: fixture-enrichment
+memory-entity-domain: legacy
 ---
 
 # Evidence-gated reply (ReAct + MCP)

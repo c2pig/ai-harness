@@ -7,5 +7,7 @@ export type {
   SkillInvocationInput,
   SkillInvocationResult,
   SkillRuntimeDeps,
+  SkillRuntimeErrorLogger,
   ToolTraceEntry,
 } from "./types.js";
+export type { LongTermMemoryClient } from "@agent-harness/contracts";

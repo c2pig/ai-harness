@@ -8,11 +8,7 @@
     "declarationMap": true,
     "tsBuildInfoFile": "./.tsbuildinfo"
   },
-  "references": [
-    { "path": "../contracts" },
-    { "path": "../adapters-llm" },
-    { "path": "../skill-loader" }
-  ],
+  "references": [{ "path": "../contracts" }],
   "include": ["src/**/*.ts"],
   "exclude": ["src/**/*.test.ts"]
 }

@@ -1,5 +1,5 @@
 {
-  "name": "@agent-harness/adapters-llm",
+  "name": "@agent-harness/memory",
   "version": "0.2.0",
   "private": true,
   "type": "module",
@@ -12,14 +12,18 @@
     }
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json"
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run"
   },
   "dependencies": {
     "@agent-harness/contracts": "workspace:*",
-    "openai": "^4.77.0",
-    "zod": "^3.23.8"
+    "better-sqlite3": "^12.6.2",
+    "debug": "^4.4.0",
+    "mem0ai": "^2.4.6"
   },
   "devDependencies": {
-    "typescript": "^5.7.2"
+    "@types/debug": "^4.1.12",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
   }
 }

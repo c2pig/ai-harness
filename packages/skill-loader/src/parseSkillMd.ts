@@ -88,6 +88,18 @@ export function parseSkillMarkdown(
       ? contextStrategyRaw.trim()
       : undefined;
 
+  const memoryEntityDomainRaw = fm["memory-entity-domain"];
+  let memoryEntityDomain: "journey" | "legacy" | undefined;
+  if (typeof memoryEntityDomainRaw === "string" && memoryEntityDomainRaw.trim()) {
+    const v = memoryEntityDomainRaw.trim().toLowerCase();
+    if (v !== "journey" && v !== "legacy") {
+      throw new Error(
+        `Invalid memory-entity-domain "${memoryEntityDomainRaw}" in SKILL.md (dir: ${dirName}); expected journey or legacy`,
+      );
+    }
+    memoryEntityDomain = v as "journey" | "legacy";
+  }
+
   return {
     id: dirName,
     catalogueRoot,
@@ -97,5 +109,6 @@ export function parseSkillMarkdown(
     mcpServerIds,
     hitl,
     ...(contextStrategy ? { contextStrategy } : {}),
+    ...(memoryEntityDomain ? { memoryEntityDomain } : {}),
   };
 }

@@ -25,6 +25,11 @@ export interface LoadedSkill {
   hitl: boolean;
   /** Optional key for demo-api run-context strategy (e.g. fixture-enrichment). */
   contextStrategy?: string;
+  /**
+   * From frontmatter `memory-entity-domain`: partitions Mem0 entity ids (fixture contacts only).
+   * `journey` → `user-5001-journey`; `legacy` → `user-5001-legacy`.
+   */
+  memoryEntityDomain?: "journey" | "legacy";
 }
 
 export interface SkillIndexEntry {
@@ -33,4 +38,5 @@ export interface SkillIndexEntry {
   playbookVersion?: string;
   hitl?: boolean;
   mcpServerIds?: string[];
+  memoryEntityDomain?: "journey" | "legacy";
 }

@@ -35,6 +35,7 @@ export function buildSkillIndex(skills: Map<string, LoadedSkill>): SkillIndexEnt
     playbookVersion: s.playbookVersion,
     hitl: s.hitl,
     mcpServerIds: s.mcpServerIds.length ? s.mcpServerIds : undefined,
+    ...(s.memoryEntityDomain ? { memoryEntityDomain: s.memoryEntityDomain } : {}),
   }));
 }
 

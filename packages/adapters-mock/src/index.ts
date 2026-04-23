@@ -14,3 +14,7 @@ export {
 export * from "./scenarios.js";
 export * from "./payload.js";
 export * from "./scenarioContextTypes.js";
+export {
+  getArchitectureDeptFixture,
+  type ArchitectureDeptFixture,
+} from "./architectureDept.js";

@@ -15,7 +15,8 @@
     { "path": "../../packages/orchestration-engine" },
     { "path": "../../packages/adapters-mock" },
     { "path": "../../packages/adapters-llm" },
-    { "path": "../../packages/ai-harness" }
+    { "path": "../../packages/ai-harness" },
+    { "path": "../../packages/memory" }
   ],
   "include": ["src/**/*.ts"]
 }

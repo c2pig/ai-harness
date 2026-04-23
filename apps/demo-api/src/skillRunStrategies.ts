@@ -5,18 +5,31 @@
 
 import type { LoadedSkill } from "@agent-harness/skill-loader";
 import {
+  getArchitectureDeptFixture,
   getContactFixture,
   SCENARIO_CONTRACTS,
 } from "@agent-harness/adapters-mock";
 import type { ScenarioId } from "@agent-harness/adapters-mock";
+import {
+  buildFixtureEntityId,
+  SHARED_DEPT_ARCHITECTURE_ENTITY_ID,
+  type MemoryEntityDomain,
+} from "@agent-harness/memory";
 
 export type RunContextStrategy = {
   mergeFromInput(
     input: string,
     explicit: Record<string, unknown> | undefined,
   ): Record<string, unknown> | undefined;
-  enrichContext(ctx: Record<string, unknown> | undefined): Record<string, unknown>;
+  enrichContext(
+    ctx: Record<string, unknown> | undefined,
+    skill: LoadedSkill,
+  ): Record<string, unknown>;
 };
+
+function memoryEnabledFromEnv(): boolean {
+  return process.env.MEMORY_ENABLED === "true";
+}
 
 function resolveScenarioId(hint: unknown, recommended?: ScenarioId): ScenarioId {
   if (typeof hint === "string" && hint in SCENARIO_CONTRACTS) {
@@ -81,7 +94,33 @@ export function parseHirerIdsFromInput(input: string): Record<string, number> {
 
 const defaultRunContextStrategy: RunContextStrategy = {
   mergeFromInput: (_input, explicit) => explicit,
-  enrichContext: (ctx) => ({ ...(ctx ?? {}) }),
+  enrichContext: (ctx, _skill) => ({ ...(ctx ?? {}) }),
+};
+
+const deptMemoryStrategy: RunContextStrategy = {
+  mergeFromInput: (_input, explicit) => ({ ...(explicit ?? {}) }),
+  enrichContext: (ctx, _skill) => {
+    const base = { ...(ctx ?? {}) };
+    const explicitEntity =
+      typeof base.entityId === "string" && base.entityId.trim()
+        ? base.entityId.trim()
+        : undefined;
+    const architectureDept = getArchitectureDeptFixture();
+    const memoryVertical =
+      typeof base.memoryVertical === "string" && base.memoryVertical.trim()
+        ? base.memoryVertical.trim()
+        : "architecture";
+    if (!memoryEnabledFromEnv()) {
+      return { ...base, architectureDept };
+    }
+    const entityId = explicitEntity ?? SHARED_DEPT_ARCHITECTURE_ENTITY_ID;
+    return {
+      ...base,
+      architectureDept,
+      entityId,
+      memoryVertical,
+    };
+  },
 };
 
 const fixtureEnrichmentStrategy: RunContextStrategy = {
@@ -89,8 +128,13 @@ const fixtureEnrichmentStrategy: RunContextStrategy = {
     const parsed = parseHirerIdsFromInput(input);
     return { ...parsed, ...(explicit ?? {}) };
   },
-  enrichContext: (ctx) => {
+  enrichContext: (ctx, skill) => {
     const base = { ...(ctx ?? {}) };
+    const explicitEntity =
+      typeof base.entityId === "string" && base.entityId.trim()
+        ? base.entityId.trim()
+        : undefined;
+
     const raw = base.candidateId;
     const num =
       typeof raw === "number"
@@ -98,7 +142,9 @@ const fixtureEnrichmentStrategy: RunContextStrategy = {
         : typeof raw === "string"
           ? Number(raw)
           : NaN;
-    if (!Number.isFinite(num)) return base;
+    if (!Number.isFinite(num)) {
+      return explicitEntity ? { ...base, entityId: explicitEntity } : base;
+    }
 
     const fixture = getContactFixture(num);
     const scenarioId = resolveScenarioId(base.scenarioHint, fixture?.recommendedScenarioId);
@@ -132,6 +178,16 @@ const fixtureEnrichmentStrategy: RunContextStrategy = {
       confidence: 0,
     };
 
+    const domain: MemoryEntityDomain = skill.memoryEntityDomain ?? "legacy";
+    const resolvedEntityId =
+      memoryEnabledFromEnv() ? buildFixtureEntityId(num, domain) : undefined;
+    const entityId = explicitEntity ?? resolvedEntityId;
+
+    const memoryVertical =
+      typeof base.memoryVertical === "string" && base.memoryVertical.trim()
+        ? base.memoryVertical.trim()
+        : "hiring";
+
     return {
       ...base,
       candidateId: num,
@@ -139,11 +195,13 @@ const fixtureEnrichmentStrategy: RunContextStrategy = {
       jobId,
       matchId,
       orchestrationSeed,
+      ...(entityId ? { entityId, memoryVertical } : {}),
     };
   },
 };
 
 const strategiesByName = new Map<string, RunContextStrategy>([
+  ["dept-memory", deptMemoryStrategy],
   ["fixture-enrichment", fixtureEnrichmentStrategy],
 ]);
 
@@ -167,5 +225,5 @@ export function enrichRunContext(
   skill: LoadedSkill,
   ctx: Record<string, unknown> | undefined,
 ): Record<string, unknown> {
-  return runContextStrategyFor(skill).enrichContext(ctx);
+  return runContextStrategyFor(skill).enrichContext(ctx, skill);
 }

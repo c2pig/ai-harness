@@ -27,11 +27,13 @@ let activeThreadId = null;
 /** Set when status is hitl_pending — used for resume URL */
 let lastRunId = null;
 
-/** @type {{ name: string, description: string, playbookVersion?: string, hitl?: boolean, mcpServerIds?: string[] }[]} */
+/** @type {{ name: string, description: string, playbookVersion?: string, hitl?: boolean, mcpServerIds?: string[], memoryEntityDomain?: string }[]} */
 let CATALOGUE_SKILLS = [];
 
-/** Example prompts per skill (fixtures: candidate 5001 → job 101). */
+/** Example prompts per skill (fixtures: candidate 5001 → job 101 where applicable). */
 const SKILL_INPUT_EXAMPLES = {
+  "accumulate-knowledge-arch":
+    "What is Jordan Okonkwo focused on right now across Project Aurora and Nexus?",
   "evidence-gated-reply":
     "Draft message variants for contact 5001 on job 101 (match context from fixtures).",
   "property-listing-touchpoint":
@@ -171,15 +173,15 @@ async function loadCatalogue() {
 
 function fillSkillSelect() {
   if (!CATALOGUE_SKILLS.length) {
-    skillNameSelect.innerHTML = `<option value="demo-echo">demo-echo</option>`;
+    skillNameSelect.innerHTML = `<option value="accumulate-knowledge-arch">accumulate-knowledge-arch</option>`;
     return;
   }
   skillNameSelect.innerHTML = CATALOGUE_SKILLS.map(
     (s) =>
       `<option value="${escapeHtml(s.name)}">${escapeHtml(s.name)}</option>`,
   ).join("");
-  const de = CATALOGUE_SKILLS.find((s) => s.name === "demo-echo");
-  if (de) skillNameSelect.value = "demo-echo";
+  const preferred = CATALOGUE_SKILLS.find((s) => s.name === "accumulate-knowledge-arch");
+  if (preferred) skillNameSelect.value = "accumulate-knowledge-arch";
 }
 
 function updateSkillMeta() {
@@ -196,6 +198,11 @@ function updateSkillMeta() {
   : "";
   const tags = [];
   if (s.hitl) tags.push(`<span class="tag tag-hitl">HITL</span>`);
+  if (s.memoryEntityDomain) {
+    tags.push(
+      `<span class="tag tag-domain">Memory: ${escapeHtml(s.memoryEntityDomain)}</span>`,
+    );
+  }
   if (s.mcpServerIds?.length) {
     tags.push(
       `<span class="tag tag-mcp">MCP: ${escapeHtml(s.mcpServerIds.join(", "))}</span>`,

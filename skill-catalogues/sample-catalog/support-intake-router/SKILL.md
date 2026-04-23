@@ -4,6 +4,7 @@ description: Route support conversations by issue type using stub billing, healt
 metadata:
   version: "1.0.0"
 mcp-server: mcp-tools-generic
+memory-entity-domain: legacy
 ---
 
 # Support intake router

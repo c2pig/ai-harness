@@ -1,6 +1,7 @@
 import type { BaseMessage } from "@langchain/core/messages";
 import type { ChatOpenAI } from "@langchain/openai";
 import type { MemorySaver } from "@langchain/langgraph-checkpoint";
+import type { LongTermMemoryClient } from "@agent-harness/contracts";
 import type { LoadedSkill } from "@agent-harness/skill-loader";
 import type { McpClientPool } from "./mcpClientPool.js";
 
@@ -43,8 +44,17 @@ export interface SkillInvocationResult {
   toolTrace: ToolTraceEntry[];
 }
 
+/** Pino-like sink for non-fatal skill runtime errors (e.g. long-term memory persist). */
+export interface SkillRuntimeErrorLogger {
+  error: (obj: Record<string, unknown>, msg: string) => void;
+}
+
 export interface SkillRuntimeDeps {
   llm: ChatOpenAI;
   checkpointer: MemorySaver;
   mcpPool: McpClientPool;
+  /** When set, runSkillInvocation enriches the system prompt from Mem0 (or compatible) search. */
+  longTermMemory?: LongTermMemoryClient;
+  /** When set, long-term memory persist failures are logged here instead of being silent. */
+  errorLogger?: SkillRuntimeErrorLogger;
 }

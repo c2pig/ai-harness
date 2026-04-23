@@ -4,6 +4,7 @@ description: Branch on buyer interest — qualify cold leads or propose viewings
 metadata:
   version: "1.0.0"
 mcp-server: mcp-tools-generic
+memory-entity-domain: legacy
 ---
 
 # Property listing touchpoint
